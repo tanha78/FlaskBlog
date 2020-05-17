@@ -4,6 +4,11 @@
 {% block content %}
 <h1>Welcome Admin...</h1>
 <form action="{{ url_for('admin.login') }}" method="POST">
+    {{ form.hidden_tag() }}
+    Email:{{ form.email }}<br/><br/>
+    Password:{{ form.password }}<br/><br/> 
+    <input type="submit" value="Login">
+
     {% with messages = get_flashed_messages(True) %}
         {% if messages %}
         <div class="row">
@@ -18,9 +23,6 @@
         </div>
         {% endif %}
     {% endwith %}
-    {{ form.hidden_tag() }}
-    Email: {{ form.email }}<br/><br/>
-    Password:{{ form.password }}<br/><br/> 
-    <input type="submit" value="Login">
+
 </form>
 {% endblock %}

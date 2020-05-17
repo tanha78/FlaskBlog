@@ -2,10 +2,14 @@ from flask import session, render_template , request, abort, flash
 from . import admin  
 from mod_users.forms import LoginForm
 from mod_users.modeles import User
- 
+from .utils import admin_only_view
+
 
 @admin.route('/')
+@admin_only_view
 def index():
+    if session.get('user_id') is None:
+        abort(401)
     return 'Hello from admin index '
 
 
@@ -23,9 +27,13 @@ def login():
         if not user.check_password(form.password.data):
             flash('Incorrect password !', category='error')
             return render_template('/admin/login.html', form=form), 400
+        if not user.is_admin():
+            flash('You are not admin','warning')
+            return render_template('/admin/login.html', form=form)
         session['email'] = user.email
         session['user_id'] = user.id
+        session['role'] = user.role
         return "Loged in successfully"
-    if session.get('email') is not None:
+    if session.get('role') == 1:
         return "you are already loged in !"
     return render_template('admin/login.html', form=form)
